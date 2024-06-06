@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Pong</title>
+  </head>
+
+  <body>
+    <canvas id="MeinCanvas" width="600" height="600"></canvas>
+    <script>
+      var ballx = 310;
+      var bally = 565;
+      let padX = 290;
+      let padY = 575;
+      let padWidth = 100;
+      let padHeight = 20;
+      var dx = 3;
+      var dy = 1.7;
+      var xAx = false;
+      var yAx = true;
+      let count = 0;
+      var context = MeinCanvas.getContext("2d");
+
+      function init() {
+        return setInterval(draw, 10);
+      }
+
+      function draw() {
+        context.clearRect(0, 0, 600, 600);
+        context.fillStyle = "#00A308";
+        context.beginPath();
+        context.arc(ballx, bally, 10, 0, Math.PI * 2, true);
+        context.fillStyle = "black";
+        context.fillRect(padX, padY, padWidth, padHeight);
+        context.fillStyle = "black";
+
+        context.closePath();
+        context.fill();
+
+        //Ball movement
+        if (ballx >= 590) {
+          xAx = true;
+        } else if (ballx <= 10) {
+          xAx = false;
+        }
+        if (bally >= 590) {
+          count++;
+          let ausgabe = "Missed balls: " + count;
+          document.getElementById("text").innerHTML = ausgabe;
+          ballx = padX + padWidth / 2;
+          bally = 565;
+          yAx = true;
+        } else if (bally <= 10) {
+          yAx = false;
+        } else if (ballx >= padX && ballx <= padX + padWidth) {
+          if (bally >= padY) {
+            yAx = true;
+          }
+        }
+
+        if (yAx) {
+          bally -= dy;
+        } else {
+          bally += dy;
+        }
+        if (xAx) {
+          ballx -= dx;
+        } else {
+          ballx += dx;
+        }
+      }
+
+      //paddle movement
+      window.addEventListener("devicemotion", function (event) {
+        if (Math.round(event.accelerationIncludingGravity.x) < 0) {
+          if (padX + padWidth <= 600) {
+            padX += 10;
+          }
+        } else if (Math.round(event.accelerationIncludingGravity.x) > 0) {
+          if (padX >= 0) {
+            padX -= 10;
+          }
+        }
+      });
+
+      init();
+    </script>
+    <p id="text">Missed balls:</p>
+  </body>
+</html>
